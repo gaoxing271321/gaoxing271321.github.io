@@ -72,7 +72,7 @@ body {
   height: 50%;
   background: var(--clr);
   transform-origin: bottom right;
-  transform: rotate(calc(45deg * var(--i)));
+  transform: rotate(calc(30deg * var(--i)));
   clip-path: polygon(0 0, 56% 0, 100% 100%, 0 56%);
   display: flex;
   justify-content: center;
