@@ -1,89 +1,117 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>抽奖系统</title>
+    <title>转盘示例</title>
     <style>
         body {
             font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background: #f0f0f0;
+            margin: 0;
+        }
+        .wheel-container {
+            position: relative;
+            width: 300px;
+            height: 300px;
+            margin: 20px;
+            border-radius: 50%;
+            border: 5px solid #333;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .settings {
+            width: 300px;
             text-align: center;
-            margin-top: 50px;
         }
-        #drawButton {
-            padding: 10px 20px;
-            font-size: 16px;
-            cursor: pointer;
+        .settings input, .settings button {
+            margin: 5px;
         }
-        #records {
-            margin-top: 20px;
+        .wheel-segment {
+            position: absolute;
+            width: 50%;
+            height: 50%;
+            top: 50%;
+            left: 50%;
+            transform-origin: 0% 100%;
+            text-align: center;
+            writing-mode: vertical-rl;
+            font-size: 14px;
         }
     </style>
-    <!-- Firebase SDK -->
-    <script src="https://www.gstatic.com/firebasejs/9.1.3/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.1.3/firebase-firestore.js"></script>
 </head>
 <body>
-    <h1>抽奖系统</h1>
-    <button id="drawButton">抽奖</button>
-    <div id="records">加载中...</div>
+    <div class="settings">
+        <h2>设置区</h2>
+        <div>
+            名称区域：<input type="text" id="nameInput" placeholder="输入名称">
+            <button onclick="addName()">添加名称</button>
+        </div>
+        <div>
+            权重（角度）：<input type="number" id="weightInput" placeholder="输入权重">
+        </div>
+        <div>
+            <button onclick="resetWheel()">重置转盘</button>
+        </div>
+    </div>
+    <div class="wheel-container" id="nameWheel">
+        <div id="nameSegments"></div>
+    </div>
+    <div class="wheel-container" id="dataWheel">
+        <!-- 数据区域转盘，可以根据需要添加内容 -->
+    </div>
 
     <script>
-        // Your Firebase configuration
-        const firebaseConfig = {
-            apiKey: "YOUR_API_KEY",
-            authDomain: "YOUR_AUTH_DOMAIN",
-            projectId: "YOUR_PROJECT_ID",
-            storageBucket: "YOUR_STORAGE_BUCKET",
-            messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-            appId: "YOUR_APP_ID"
-        };
+        let names = [];
+        let weights = [];
+        let totalWeight = 0;
+        let startAngle = 0;
 
-        // Initialize Firebase
-        const app = firebase.initializeApp(firebaseConfig);
-        const db = firebase.firestore(app);
+        function addName() {
+            const name = document.getElementById('nameInput').value;
+            const weight = parseFloat(document.getElementById('weightInput').value);
 
-        const drawButton = document.getElementById('drawButton');
-        const recordsDiv = document.getElementById('records');
+            if (name && !isNaN(weight)) {
+                names.push(name);
+                weights.push(weight);
+                totalWeight += weight;
+                renderWheel();
+                document.getElementById('nameInput').value = '';
+                document.getElementById('weightInput').value = '';
+            }
+        }
 
-        drawButton.addEventListener('click', async () => {
-            const randomNumber = Math.floor(Math.random() * 100) + 1;
-            await db.collection('draws').add({
-                number: randomNumber,
-                timestamp: firebase.firestore.FieldValue.serverTimestamp()
+        function resetWheel() {
+            names = [];
+            weights = [];
+            totalWeight = 0;
+            startAngle = 0;
+            renderWheel();
+        }
+
+        function renderWheel() {
+            const nameSegments = document.getElementById('nameSegments');
+            nameSegments.innerHTML = '';
+
+            let currentAngle = 0;
+            names.forEach((name, index) => {
+                const segmentAngle = (weights[index] / totalWeight) * 360;
+                const segment = document.createElement('div');
+                segment.className = 'wheel-segment';
+                segment.style.transform = `rotate(${currentAngle}deg)`;
+                segment.style.width = `${segmentAngle}deg`;
+                segment.innerText = name;
+                nameSegments.appendChild(segment);
+                currentAngle += segmentAngle;
             });
-        });
-
-        const renderRecords = (snapshot) => {
-            const records = [];
-            snapshot.forEach(doc => {
-                records.push({ id: doc.id, ...doc.data() });
-            });
-            records.sort((a, b) => b.number - a.number);
-
-            recordsDiv.innerHTML = `
-                <table border="1" style="margin: 0 auto;">
-                    <thead>
-                        <tr>
-                            <th>排名</th>
-                            <th>数字</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        ${records.map((record, index) => `
-                            <tr>
-                                <td>${index + 1}</td>
-                                <td>${record.number}</td>
-                            </tr>
-                        `).join('')}
-                    </tbody>
-                </table>
-            `;
-        };
-
-        db.collection('draws').orderBy('number', 'desc').onSnapshot(snapshot => {
-            renderRecords(snapshot);
-        });
+        }
     </script>
 </body>
 </html>
