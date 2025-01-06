@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>倒计时到1月28日</title>
+    <title>Your Birthday!</title>
     <style>
         body {
             display: flex;
@@ -34,7 +34,7 @@
             const distance = targetDate - now;
 
             if (distance < 0) {
-                document.getElementById('countdown').innerHTML = "已到期!";
+                document.getElementById('countdown').innerHTML = "Happy Birthday!";
                 clearInterval(interval);
                 return;
             }
@@ -44,7 +44,7 @@
             const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
             const seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
-            document.getElementById('countdown').innerHTML = `${days}天 ${hours}小时 ${minutes}分钟 ${seconds}秒 `;
+            document.getElementById('countdown').innerHTML = `距离姐的生日:${days}DAY ${hours}H ${minutes}MIN ${seconds}S `;
         }
 
         const interval = setInterval(updateCountdown, 1000);
