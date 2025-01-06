@@ -3,20 +3,52 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>翻牌器时钟</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>倒计时到1月28日</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+        }
+        #countdown {
+            font-size: 3em;
+            text-align: center;
+        }
+    </style>
 </head>
 <body>
-    <div class="scoreboard">
-        <div class="digit" id="hours-tens"></div>
-        <div class="digit" id="hours-ones"></div>
-        <div class="colon">:</div>
-        <div class="digit" id="minutes-tens"></div>
-        <div class="digit" id="minutes-ones"></div>
-        <div class="colon">:</div>
-        <div class="digit" id="seconds-tens"></div>
-        <div class="digit" id="seconds-ones"></div>
-    </div>
-    <script src="script.js"></script>
+    <div id="countdown"></div>
+
+    <script>
+        // 设置目标日期和时间
+        const targetDate = new Date();
+        targetDate.setMonth(0, 28); // 0代表1月（月份从0开始计数），28代表日期
+        targetDate.setHours(23, 59, 59, 999); // 设置时间为23:59:59.999
+
+        function updateCountdown() {
+            const now = new Date();
+            const distance = targetDate - now;
+
+            if (distance < 0) {
+                document.getElementById('countdown').innerHTML = "已到期!";
+                clearInterval(interval);
+                return;
+            }
+
+            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+            document.getElementById('countdown').innerHTML = `${days}天 ${hours}小时 ${minutes}分钟 ${seconds}秒 `;
+        }
+
+        const interval = setInterval(updateCountdown, 1000);
+        updateCountdown(); // 立即调用一次以避免首次加载时的1秒延迟
+    </script>
 </body>
 </html>
