@@ -12,16 +12,11 @@
             height: 100vh;
             margin: 0;
             font-family: Arial, sans-serif;
-            background: linear-gradient(135deg, #ff6f61, #d4fc79);
-            background-size: 200% 200%;
+            background: linear-gradient(45deg, #ff6b6b, #f06595, #cc5de8, #556270);
+            background-size: 400% 400%;
             animation: gradient 15s ease infinite;
-        }
-
-        #countdown {
-            font-size: 3em;
-            text-align: center;
-            color: #ffffff;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6);
+            overflow: hidden;
+            cursor: pointer;
         }
 
         @keyframes gradient {
@@ -35,11 +30,38 @@
                 background-position: 0% 50%;
             }
         }
+
+        #countdown {
+            font-size: 2em;
+            text-align: center;
+            color: white;
+            line-height: 1.5em;
+        }
+
+        .ribbon {
+            position: absolute;
+            width: 10px;
+            height: 50px;
+            background-color: rgba(255, 255, 255, 0.8);
+            border-radius: 5px;
+            transform: rotate(-45deg);
+            animation: fall 2s infinite;
+        }
+
+        @keyframes fall {
+            0% {
+                top: -50px;
+                opacity: 1;
+            }
+            100% {
+                top: 110vh;
+                opacity: 0;
+            }
+        }
     </style>
 </head>
 <body>
     <div id="countdown"></div>
-
     <script>
         // 设置目标日期和时间
         const targetDate = new Date();
@@ -51,23 +73,39 @@
             const distance = targetDate - now;
 
             if (distance < 0) {
-                document.getElementById('countdown').innerHTML = "Happy Birthday!";
+                document.getElementById('countdown').innerHTML = "Happy Birthday!<br>祝姐姐生日快乐！";
                 clearInterval(interval);
                 return;
             }
 
-            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            const months = Math.floor(distance / (1000 * 60 * 60 * 24 * 30));
+            const days = Math.floor((distance % (1000 * 60 * 60 * 24 * 30)) / (1000 * 60 * 60 * 24));
             const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
             const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
             const seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
-            document.getElementById('countdown').innerHTML = `距离姐的生日：<span>${days}天</span> ${hours}小时 ${minutes}分钟 ${seconds}秒`;
+            document.getElementById('countdown').innerHTML = `
+                <div>祝姐姐的生日：</div>
+                <div>${months}月 ${days}天</div>
+                <div>${hours}小时 ${minutes}分 ${seconds}秒</div>
+            `;
         }
 
         const interval = setInterval(updateCountdown, 1000);
         updateCountdown(); // 立即调用一次以避免首次加载时的1秒延迟
+
+        // 彩带飘落效果
+        document.body.addEventListener('click', function() {
+            const ribbon = document.createElement('div');
+            ribbon.className = 'ribbon';
+            ribbon.style.left = Math.random() * 100 + 'vw';
+            document.body.appendChild(ribbon);
+
+            ribbon.addEventListener('animationend', function() {
+                ribbon.remove();
+            });
+        });
     </script>
 </body>
 </html>
 
-</html>
