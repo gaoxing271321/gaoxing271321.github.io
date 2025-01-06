@@ -12,37 +12,63 @@
             height: 100vh;
             margin: 0;
             font-family: Arial, sans-serif;
-            background-color: #87CEEB; /* 淡蓝色背景 */
-            color: white; /* 白色文字 */
-            cursor: pointer; /* 鼠标指针样式 */
+            background: linear-gradient(135deg, #e0f7fa, #81d4fa);
+            color: white;
+            overflow: hidden;
+            cursor: pointer;
         }
         #countdown {
+            text-align: center;
+            font-size: 2em;
+            margin-bottom: 20px;
+        }
+        .progress-bar {
+            width: 80%;
+            height: 10px;
+            background-color: #e0f7fa;
+            border-radius: 5px;
+            overflow: hidden;
+            margin: 20px auto;
+        }
+        .progress {
+            height: 100%;
+            background-color: #00796b;
+            width: 100%;
+            border-radius: 5px;
+            transition: width 1s;
+        }
+        .message {
             font-size: 2em;
             text-align: center;
-        }
-        .hidden {
-            display: none;
         }
     </style>
 </head>
 <body onclick="ripple(event)">
     <div id="countdown"></div>
+    <div class="progress-bar">
+        <div class="progress" id="progressBar"></div>
+    </div>
+    <div class="message" id="message"></div>
     <script>
         // 设置目标日期和时间
         const targetDate = new Date();
-        targetDate.setMonth(0, 28); // 0代表1月（月份从0开始计数），28代表日期
-        targetDate.setHours(23, 59, 59, 999); // 设置时间为23:59:59.999
+        targetDate.setMonth(0, 28); // 设置为1月28日
+        targetDate.setHours(23, 59, 59, 999); // 设置为23:59:59.999
 
         function updateCountdown() {
             const now = new Date();
             const distance = targetDate - now;
 
             if (distance < 0) {
-                document.getElementById('countdown').innerHTML = "姐姐生日快乐！";
+                document.getElementById('countdown').style.display = 'none';
+                document.getElementById('message').innerText = "姐姐生日快乐！";
+                document.getElementById('progressBar').style.width = '0%';
                 clearInterval(interval);
-                document.body.style.backgroundColor = "#FFC0CB"; // 变更背景颜色
                 return;
             }
+
+            const totalDistance = targetDate - new Date(now.getFullYear(), 0, 1);
+            const progress = (1 - (distance / totalDistance)) * 100;
 
             const months = Math.floor(distance / (1000 * 60 * 60 * 24 * 30));
             const days = Math.floor((distance % (1000 * 60 * 60 * 24 * 30)) / (1000 * 60 * 60 * 24));
@@ -55,47 +81,45 @@
                 <div>${months}月 ${days}天</div>
                 <div>${hours}小时 ${minutes}分钟 ${seconds}秒</div>
             `;
+            document.getElementById('progressBar').style.width = progress + '%';
         }
 
         const interval = setInterval(updateCountdown, 1000);
-        updateCountdown(); // 立即调用一次以避免首次加载时的1秒延迟
+        updateCountdown();
 
-        // 点击特效
-        function ripple(e) {
-            const span = document.createElement('span');
-            span.style.position = 'absolute';
-            span.style.width = '200px';
-            span.style.height = '200px';
-            span.style.left = `${e.clientX - 100}px`;
-            span.style.top = `${e.clientY - 100}px`;
-            span.style.backgroundColor = 'rgba(255, 255, 255, 0.3)';
-            span.style.borderRadius = '50%';
-            span.style.transform = 'scale(0)';
-            span.style.animation = 'ripple 1s infinite';
-            document.body.appendChild(span);
+        function ripple(event) {
+            const circle = document.createElement('div');
+            const diameter = Math.max(window.innerWidth, window.innerHeight) / 10;
+            const radius = diameter / 2;
+
+            circle.style.width = circle.style.height = `${diameter}px`;
+            circle.style.left = `${event.clientX - radius}px`;
+            circle.style.top = `${event.clientY - radius}px`;
+            circle.style.backgroundColor = 'rgba(255, 255, 255, 0.3)';
+            circle.style.borderRadius = '50%';
+            circle.style.position = 'absolute';
+            circle.style.transform = 'scale(0)';
+            circle.style.animation = 'ripple 1s linear';
+
+            document.body.appendChild(circle);
 
             setTimeout(() => {
-                span.remove();
+                circle.remove();
             }, 1000);
         }
-
-        // 为了在CSS中定义动画
-        const style = document.createElement('style');
-        style.innerHTML = `
-            @keyframes ripple {
-                0% {
-                    transform: scale(0);
-                    opacity: 1;
-                }
-                100% {
-                    transform: scale(2);
-                    opacity: 0;
-                }
-            }
-        `;
-        document.head.appendChild(style);
     </script>
+    <style>
+        @keyframes ripple {
+            0% {
+                transform: scale(0);
+                opacity: 1;
+            }
+            100% {
+                transform: scale(4);
+                opacity: 0;
+            }
+        }
+    </style>
 </body>
 </html>
-
 
