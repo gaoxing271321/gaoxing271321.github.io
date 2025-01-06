@@ -12,37 +12,20 @@
             height: 100vh;
             margin: 0;
             font-family: Arial, sans-serif;
-            overflow: hidden;
-            background: linear-gradient(45deg, #ff6b6b, #f06595, #cc5de8, #5856d6, #45b8ac);
-            background-size: 600% 600%;
-            animation: gradientBG 10s ease infinite;
-            color: white;
-            text-align: center;
-            cursor: pointer;
+            background-color: #87CEEB; /* 淡蓝色背景 */
+            color: white; /* 白色文字 */
+            cursor: pointer; /* 鼠标指针样式 */
         }
-
         #countdown {
             font-size: 2em;
+            text-align: center;
         }
-
-        @keyframes gradientBG {
-            0% {
-                background-position: 0% 50%;
-            }
-            50% {
-                background-position: 100% 50%;
-            }
-            100% {
-                background-position: 0% 50%;
-            }
-        }
-
         .hidden {
             display: none;
         }
     </style>
 </head>
-<body>
+<body onclick="ripple(event)">
     <div id="countdown"></div>
     <script>
         // 设置目标日期和时间
@@ -57,6 +40,7 @@
             if (distance < 0) {
                 document.getElementById('countdown').innerHTML = "姐姐生日快乐！";
                 clearInterval(interval);
+                document.body.style.backgroundColor = "#FFC0CB"; // 变更背景颜色
                 return;
             }
 
@@ -77,34 +61,39 @@
         updateCountdown(); // 立即调用一次以避免首次加载时的1秒延迟
 
         // 点击特效
-        document.body.addEventListener('click', function(event) {
-            const ripple = document.createElement('div');
-            ripple.style.position = 'absolute';
-            ripple.style.width = '200px';
-            ripple.style.height = '200px';
-            ripple.style.backgroundColor = 'rgba(255, 255, 255, 0.3)';
-            ripple.style.borderRadius = '50%';
-            ripple.style.transform = `translate(${event.clientX - window.innerWidth / 2}px, ${event.clientY - window.innerHeight / 2}px)`;
-            ripple.style.animation = 'ripple 1s infinite';
-            ripple.classList.add('ripple');
+        function ripple(e) {
+            const span = document.createElement('span');
+            span.style.position = 'absolute';
+            span.style.width = '200px';
+            span.style.height = '200px';
+            span.style.left = `${e.clientX - 100}px`;
+            span.style.top = `${e.clientY - 100}px`;
+            span.style.backgroundColor = 'rgba(255, 255, 255, 0.3)';
+            span.style.borderRadius = '50%';
+            span.style.transform = 'scale(0)';
+            span.style.animation = 'ripple 1s infinite';
+            document.body.appendChild(span);
 
-            document.body.appendChild(ripple);
-
-            ripple.addEventListener('animationend', function() {
-                ripple.remove();
-            });
-        });
-
-        @keyframes ripple {
-            from {
-                transform: scale(0);
-                opacity: 1;
-            }
-            to {
-                transform: scale(2);
-                opacity: 0;
-            }
+            setTimeout(() => {
+                span.remove();
+            }, 1000);
         }
+
+        // 为了在CSS中定义动画
+        const style = document.createElement('style');
+        style.innerHTML = `
+            @keyframes ripple {
+                0% {
+                    transform: scale(0);
+                    opacity: 1;
+                }
+                100% {
+                    transform: scale(2);
+                    opacity: 0;
+                }
+            }
+        `;
+        document.head.appendChild(style);
     </script>
 </body>
 </html>
