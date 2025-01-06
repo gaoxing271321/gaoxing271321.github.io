@@ -12,11 +12,28 @@
             height: 100vh;
             margin: 0;
             font-family: Arial, sans-serif;
-            background-color: #f0f0f0;
+            background: linear-gradient(135deg, #ff6f61, #d4fc79);
+            background-size: 200% 200%;
+            animation: gradient 15s ease infinite;
         }
+
         #countdown {
             font-size: 3em;
             text-align: center;
+            color: #ffffff;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6);
+        }
+
+        @keyframes gradient {
+            0% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            100% {
+                background-position: 0% 50%;
+            }
         }
     </style>
 </head>
@@ -44,11 +61,13 @@
             const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
             const seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
-            document.getElementById('countdown').innerHTML = `距离姐的生日:${days}DAY ${hours}H ${minutes}MIN ${seconds}S `;
+            document.getElementById('countdown').innerHTML = `距离姐的生日：<span>${days}天</span> ${hours}小时 ${minutes}分钟 ${seconds}秒`;
         }
 
         const interval = setInterval(updateCountdown, 1000);
         updateCountdown(); // 立即调用一次以避免首次加载时的1秒延迟
     </script>
 </body>
+</html>
+
 </html>
