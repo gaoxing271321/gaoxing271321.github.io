@@ -3,56 +3,78 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>姐姐的生日～</title>
+    <title>倒计时到1月28号零点</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
-            margin: 0;
             background-color: #f0f0f0;
+            font-family: Arial, sans-serif;
+            margin: 0;
         }
-        #countdown {
-            font-size: 3em;
+        .countdown {
             text-align: center;
+            background: #fff;
+            padding: 20px 40px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .countdown div {
+            font-size: 2em;
+            margin: 10px 0;
         }
     </style>
 </head>
 <body>
-    <div id="countdown"></div>
+    <div class="countdown">
+        <div id="countdown-time"></div>
+    </div>
 
     <script>
-        // 设置目标日期
-        const targetDate = new Date();
-        targetDate.setMonth(0, 28); // 注意：月份从0开始计数，0代表1月
+        function countdown(endDate) {
+            let days, hours, minutes, seconds;
 
-        function updateCountdown() {
-            const now = new Date();
-            const timeRemaining = targetDate - now;
+            endDate = new Date(endDate).getTime();
 
-            if (timeRemaining < 0) {
-                document.getElementById('countdown').innerHTML = "已经到1月28日了！";
-                clearInterval(interval);
+            if (isNaN(endDate)) {
                 return;
             }
 
-            const days = Math.floor(timeRemaining / (1000 * 60 * 60 * 24));
-            const hours = Math.floor((timeRemaining % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            const minutes = Math.floor((timeRemaining % (1000 * 60 * 60)) / (1000 * 60));
-            const seconds = Math.floor((timeRemaining % (1000 * 60)) / 1000);
+            setInterval(calculate, 1000);
 
-            document.getElementById('countdown').innerHTML = `
-                姐姐的生日：${days}天 ${hours}小时 ${minutes}分钟 ${seconds}秒
-            `;
+            function calculate() {
+                let startDate = new Date();
+                startDate = startDate.getTime();
+
+                let timeRemaining = parseInt((endDate - startDate) / 1000);
+
+                if (timeRemaining >= 0) {
+                    days = parseInt(timeRemaining / 86400);
+                    timeRemaining = (timeRemaining % 86400);
+
+                    hours = parseInt(timeRemaining / 3600);
+                    timeRemaining = (timeRemaining % 3600);
+
+                    minutes = parseInt(timeRemaining / 60);
+                    timeRemaining = (timeRemaining % 60);
+
+                    seconds = parseInt(timeRemaining);
+
+                    document.getElementById("countdown-time").innerHTML = days + " 天 " + hours + " 小时 "
+                        + minutes + " 分钟 " + seconds + " 秒 ";
+                } else {
+                    document.getElementById("countdown-time").innerHTML = "倒计时结束!";
+                }
+            }
         }
 
-        // 每秒更新一次倒计时
-        const interval = setInterval(updateCountdown, 1000);
-
-        // 初始调用一次以显示初始倒计时
-        updateCountdown();
+        // 设置倒计时结束的日期和时间（1月28号零点）
+        const endTime = new Date().getFullYear() + "-01-28T00:00:00";
+        countdown(endTime);
     </script>
 </body>
 </html>
+
