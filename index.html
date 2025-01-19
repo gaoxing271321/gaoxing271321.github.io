@@ -3,123 +3,56 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Your Birthday!</title>
+    <title>姐姐的生日～</title>
     <style>
         body {
+            font-family: Arial, sans-serif;
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
             margin: 0;
-            font-family: Arial, sans-serif;
-            background: linear-gradient(135deg, #e0f7fa, #81d4fa);
-            color: white;
-            overflow: hidden;
-            cursor: pointer;
+            background-color: #f0f0f0;
         }
         #countdown {
-            text-align: center;
-            font-size: 2em;
-            margin-bottom: 20px;
-        }
-        .progress-bar {
-            width: 80%;
-            height: 10px;
-            background-color: #e0f7fa;
-            border-radius: 5px;
-            overflow: hidden;
-            margin: 20px auto;
-        }
-        .progress {
-            height: 100%;
-            background-color: #00796b;
-            width: 100%;
-            border-radius: 5px;
-            transition: width 1s;
-        }
-        .message {
-            font-size: 2em;
+            font-size: 3em;
             text-align: center;
         }
     </style>
 </head>
-<body onclick="ripple(event)">
+<body>
     <div id="countdown"></div>
-    <div class="progress-bar">
-        <div class="progress" id="progressBar"></div>
-    </div>
-    <div class="message" id="message"></div>
+
     <script>
-        // 设置目标日期和时间
+        // 设置目标日期
         const targetDate = new Date();
-        targetDate.setMonth(0, 28); // 设置为1月28日
-        targetDate.setHours(23, 59, 59, 999); // 设置为23:59:59.999
+        targetDate.setMonth(0, 28); // 注意：月份从0开始计数，0代表1月
 
         function updateCountdown() {
             const now = new Date();
-            const distance = targetDate - now;
+            const timeRemaining = targetDate - now;
 
-            if (distance < 0) {
-                document.getElementById('countdown').style.display = 'none';
-                document.getElementById('message').innerText = "姐姐生日快乐！";
-                document.getElementById('progressBar').style.width = '0%';
+            if (timeRemaining < 0) {
+                document.getElementById('countdown').innerHTML = "已经到1月28日了！";
                 clearInterval(interval);
                 return;
             }
 
-            const totalDistance = targetDate - new Date(now.getFullYear(), 0, 1);
-            const progress = (1 - (distance / totalDistance)) * 100;
-
-            const months = Math.floor(distance / (1000 * 60 * 60 * 24 * 30));
-            const days = Math.floor((distance % (1000 * 60 * 60 * 24 * 30)) / (1000 * 60 * 60 * 24));
-            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+            const days = Math.floor(timeRemaining / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((timeRemaining % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((timeRemaining % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((timeRemaining % (1000 * 60)) / 1000);
 
             document.getElementById('countdown').innerHTML = `
-                <div>姐姐的生日倒计时</div>
-                <div>${months}月 ${days}天</div>
-                <div>${hours}小时 ${minutes}分钟 ${seconds}秒</div>
+                姐姐的生日：${days}天 ${hours}小时 ${minutes}分钟 ${seconds}秒
             `;
-            document.getElementById('progressBar').style.width = progress + '%';
         }
 
+        // 每秒更新一次倒计时
         const interval = setInterval(updateCountdown, 1000);
+
+        // 初始调用一次以显示初始倒计时
         updateCountdown();
-
-        function ripple(event) {
-            const circle = document.createElement('div');
-            const diameter = Math.max(window.innerWidth, window.innerHeight) / 10;
-            const radius = diameter / 2;
-
-            circle.style.width = circle.style.height = `${diameter}px`;
-            circle.style.left = `${event.clientX - radius}px`;
-            circle.style.top = `${event.clientY - radius}px`;
-            circle.style.backgroundColor = 'rgba(255, 255, 255, 0.3)';
-            circle.style.borderRadius = '50%';
-            circle.style.position = 'absolute';
-            circle.style.transform = 'scale(0)';
-            circle.style.animation = 'ripple 1s linear';
-
-            document.body.appendChild(circle);
-
-            setTimeout(() => {
-                circle.remove();
-            }, 1000);
-        }
     </script>
-    <style>
-        @keyframes ripple {
-            0% {
-                transform: scale(0);
-                opacity: 1;
-            }
-            100% {
-                transform: scale(4);
-                opacity: 0;
-            }
-        }
-    </style>
 </body>
 </html>
-
